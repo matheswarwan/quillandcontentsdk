@@ -109,14 +109,16 @@
     console.log("quill.getContents()[\"ops\"][0][\"insert\"] ==> " + qContent);
     console.log("quill.getText() ==> " + qText);
     
-    sdk.getData(function (data) {
-      sdk.setData(data, function (setData) {
-        console.log("SetData callback inside getData ==> "+data);
+    sdk.getData(function (qContent) {
+      console.log("qContent in getData --> " + qContent);
+      sdk.setData(qContent, function (setData) {
+        console.log("SetData callback inside getData ==> "+qContent + " setData --> " + setData);
         });
       }); 
-    sdk.getContent(function (content) {
-      sdk.setContent(content, function (setContent) {
-        console.log("SetContent callback inside getContent ==> "+content);
+    sdk.getContent(function (qContent) {
+      console.log("qContent in getContent --> " + qContent);
+      sdk.setContent(qContent, function (setContent) {
+        console.log("SetContent callback inside getContent ==> "+qContent + " setContent --> " + setContent);
         });
       sdk.setSuperContent(content);
       console.log("setSuperContent inside getContent ==> "+content);
