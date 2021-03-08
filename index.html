@@ -140,7 +140,7 @@ var formats = [
     //TODO: Set quilljs default value
     if(qContent) { 
       //quill.setContents([{ insert: '\n' }]); //Clear content
-      quill.insertText(0, "set by get Data" + qContent, 'bold', true); //set content
+      quill.clipboard.dangerouslyPasteHTML( qContent );
     }
 
     /* sdk.setData(qContent, function (setData) {
