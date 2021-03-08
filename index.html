@@ -98,20 +98,31 @@
   var sdk = new window.sfdc.BlockSDK({
           blockEditorWidth: 600,
           tabs: [
-              'htmlblock', 
               'stylingblock' 
           ]
       }
       );
-
 
   function sendDatatoMC() {
     var qContent = quill.getContents()["ops"][0]["insert"];
     var qText = quill.getText();
     console.log("quill.getContents()[\"ops\"][0][\"insert\"] ==> " + qContent);
     console.log("quill.getText() ==> " + qText);
-    sdk.setContent(qContent);
-    sdk.setSuperContent(qContent); 
+    
+    sdk.getData(function (data) {
+      sdk.setData(data, function (setData) {
+        console.log("SetData callback inside getData ==> "+content);
+        });
+      }); 
+    sdk.getContent(function (content) {
+      sdk.setContent(content, function (setContent) {
+        console.log("SetContent callback inside getContent ==> "+content);
+        });
+      sdk.setSuperContent(content);
+      console.log("setSuperContent inside getContent ==> "+content);
+      }); 
+    //sdk.setContent(qContent);
+    //sdk.setSuperContent(qContent); 
     console.log("Content of SDK variable ==> " + JSON.stringify(sdk._pendingMessages));
 
   }
