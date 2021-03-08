@@ -109,18 +109,28 @@
     console.log("quill.getContents()[\"ops\"][0][\"insert\"] ==> " + qContent);
     console.log("quill.getText() ==> " + qText);
     
+    sdk.setData(qContent, function (setData) {
+        console.log("SetData callback outside getData ==> "+JSON.stringify(qContent) + " setData --> " + JSON.stringify(setData));
+        });
+
+    sdk.setContent(qContent, function (setContent) {
+        console.log("SetContent callback outsdie getContent ==> "+JSON.stringify(qContent) + " setContent --> " + JSON.stringify(setContent));
+        });
+    
+    sdk.setSuperContent(qContent);
+
     sdk.getData(function (qContent) {
       console.log("qContent in getData --> " + qContent);
-      sdk.setData(qContent, function (setData) {
+      /* sdk.setData(qContent, function (setData) {
         console.log("SetData callback inside getData ==> "+qContent + " setData --> " + setData);
-        });
+        }); */
       }); 
     sdk.getContent(function (qContent) {
       console.log("qContent in getContent --> " + qContent);
-      sdk.setContent(qContent, function (setContent) {
+      /* sdk.setContent(qContent, function (setContent) {
         console.log("SetContent callback inside getContent ==> "+qContent + " setContent --> " + setContent);
         });
-      sdk.setSuperContent(content);
+      sdk.setSuperContent(content); */
       console.log("setSuperContent inside getContent ==> "+content);
       }); 
     //sdk.setContent(qContent);
