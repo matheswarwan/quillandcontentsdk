@@ -75,8 +75,6 @@
   </div>
   <div id="editor-container"></div>
 </div>
-<button onclick="sendDatatoMC()">Send to content</button>
-  <div id="typed-content"></div>
 
 <script src="quill/blocksdk.js"></script>  
   
@@ -105,6 +103,8 @@
           ]
       }
       );
+
+
   function sendDatatoMC() {
     var qContent = quill.getContents()["ops"][0]["insert"];
     var qText = quill.getText();
@@ -115,6 +115,32 @@
     console.log("Content of SDK variable ==> " + JSON.stringify(sdk._pendingMessages));
 
   }
+
+  const debounce = (fn, delay) => {
+    let timeOutID;
+    return function(...args) {
+      if(timeOutID) { 
+        clearTimeout(timeOutID); 
+      }
+      timeOutID = setTimeout( ()=> {
+        fn(...args) 
+      },delay);
+    }
+  };
+  quill.on('text-change', debounce (e => {
+     console.log("Debounce done. Calling sendDatatoMC function.");
+     sendDatatoMC();
+     },500));
+  
+  
+  /* function(delta, source) {
+  if (source == 'api') {
+    console.log("An API call triggered this change.");
+  } else if (source == 'user') {
+    console.log("A user action triggered this change.");
+  }
+  console.log("\n\nis this coming?")
+}); */
 </script>
 
 
