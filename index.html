@@ -76,6 +76,9 @@
   <div id="editor-container"></div>
 </div>
 
+<input type="hidden" name="quill-html" id="quill-html">
+
+
 <script src="quill/blocksdk.js"></script>  
   
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js"></script>
@@ -91,9 +94,15 @@
       syntax: true,
       toolbar: '#toolbar-container'
     },
-    placeholder: 'Compose an epic...',
+    placeholder: '',
     theme: 'snow'
   });
+
+  //Set Default value to quill editor if text is available
+  var hiddenQuilHTML = document.getElementById('quill-html').value;
+  if (hiddenQuilHTML) {
+      quill.insertText(0, "Set by hidden html " + hiddenQuilHTML, 'bold', true);
+  }
 
   var sdk = new window.sfdc.BlockSDK({
           blockEditorWidth: 600,
@@ -102,6 +111,18 @@
           ]
       }
       );
+  sdk.getData(function (qContent) {
+    console.log("qContent in getData --> " + qContent);
+    //TODO: Set quilljs default value
+    if(qContent) { 
+      //quill.setContents([{ insert: '\n' }]); //Clear content
+      quill.insertText(0, "set by get Data" + qContent, 'bold', true); //set content
+    }
+
+    /* sdk.setData(qContent, function (setData) {
+      console.log("SetData callback inside getData ==> "+qContent + " setData --> " + setData);
+      }); */
+    }); 
 
   function sendDatatoMC() {
     var qContent = quill.getContents()["ops"][0]["insert"];
@@ -119,24 +140,23 @@
     
     sdk.setSuperContent(qContent);
 
-    sdk.getData(function (qContent) {
-      console.log("qContent in getData --> " + qContent);
-      /* sdk.setData(qContent, function (setData) {
-        console.log("SetData callback inside getData ==> "+qContent + " setData --> " + setData);
-        }); */
-      }); 
+
     sdk.getContent(function (qContent) {
       console.log("qContent in getContent --> " + qContent);
       /* sdk.setContent(qContent, function (setContent) {
         console.log("SetContent callback inside getContent ==> "+qContent + " setContent --> " + setContent);
         });
       sdk.setSuperContent(content); */
-      console.log("setSuperContent inside getContent ==> "+content);
+      console.log("setSuperContent inside getContent ==> "+qContent);
       }); 
     //sdk.setContent(qContent);
     //sdk.setSuperContent(qContent); 
     console.log("Content of SDK variable ==> " + JSON.stringify(sdk._pendingMessages));
 
+  }
+
+  function saveQuillHTML() {
+    document.getElementById('quill-html').value = quill.root.innerHTML;
   }
 
   const debounce = (fn, delay) => {
@@ -153,6 +173,7 @@
   quill.on('text-change', debounce (e => {
      console.log("Debounce done. Calling sendDatatoMC function.");
      sendDatatoMC();
+     saveQuillHTML();
      },500));
   
   
