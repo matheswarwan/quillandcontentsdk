@@ -88,6 +88,29 @@
 <script src="quill/quill.min.js"></script>
 
 <script>
+var formats = [
+  'background',
+  'bold',
+  'color',
+  'font',
+  'code',
+  'italic',
+  'link',
+  'size',
+  'strike',
+  'script',
+  'underline',
+  'blockquote',
+  'header',
+  'indent',
+  'list',
+  'align',
+  'direction',
+  'code-block',
+  'formula'
+  // 'image'
+  // 'video'
+  ];
   var quill = new Quill('#editor-container', {
     modules: {
       formula: true,
@@ -95,14 +118,15 @@
       toolbar: '#toolbar-container'
     },
     placeholder: '',
-    theme: 'snow'
+    theme: 'snow',
+    formats: formats
   });
 
   //Set Default value to quill editor if text is available
-  var hiddenQuilHTML = document.getElementById('quill-html').value;
+  /* var hiddenQuilHTML = document.getElementById('quill-html').value;
   if (hiddenQuilHTML) {
       quill.insertText(0, "Set by hidden html " + hiddenQuilHTML, 'bold', true);
-  }
+  }*/
 
   var sdk = new window.sfdc.BlockSDK({
           blockEditorWidth: 600,
@@ -124,8 +148,16 @@
       }); */
     }); 
 
+
+  sdk.getContent(function (qContent) {
+    console.log("qContent in getContent --> " + qContent);
+    /* sdk.setContent(qContent, function (setContent) {
+      console.log("SetContent callback inside getContent ==> "+qContent + " setContent --> " + setContent);
+      });*/
+    }); 
+
   function sendDatatoMC() {
-    var qContent = quill.getContents()["ops"][0]["insert"];
+    var qContent = quill.root.innerHTML; // quill.getContents()["ops"][0]["insert"];
     var qText = quill.getText();
     console.log("quill.getContents()[\"ops\"][0][\"insert\"] ==> " + qContent);
     console.log("quill.getText() ==> " + qText);
@@ -140,24 +172,15 @@
     
     sdk.setSuperContent(qContent);
 
-
-    sdk.getContent(function (qContent) {
-      console.log("qContent in getContent --> " + qContent);
-      /* sdk.setContent(qContent, function (setContent) {
-        console.log("SetContent callback inside getContent ==> "+qContent + " setContent --> " + setContent);
-        });
-      sdk.setSuperContent(content); */
-      console.log("setSuperContent inside getContent ==> "+qContent);
-      }); 
     //sdk.setContent(qContent);
     //sdk.setSuperContent(qContent); 
-    console.log("Content of SDK variable ==> " + JSON.stringify(sdk._pendingMessages));
+    //console.log("Content of SDK variable ==> " + JSON.stringify(sdk._pendingMessages));
 
   }
 
-  function saveQuillHTML() {
+  /* function saveQuillHTML() {
     document.getElementById('quill-html').value = quill.root.innerHTML;
-  }
+  } */
 
   const debounce = (fn, delay) => {
     let timeOutID;
@@ -173,7 +196,7 @@
   quill.on('text-change', debounce (e => {
      console.log("Debounce done. Calling sendDatatoMC function.");
      sendDatatoMC();
-     saveQuillHTML();
+     //saveQuillHTML();
      },500));
   
   
